@@ -2,80 +2,54 @@
 #include <string>
 #include <vector>
 #include <stdlib.h>
-
+#include <cmath>
+#include <algorithm>
+#include <sstream>
 
 using namespace std;
 
 int ConvertCharToInt(char s)
 {
-    if(s == '0')
-        return 0;
-    if(s == '1')
-        return 1;
-    if(s == '2')
-        return 2;
-    if(s == '3')
-        return 3;
-    if(s == '4')
-        return 4;
-    if(s == '5')
-        return 5;
-    if(s == '6')
-        return 6;
-    if(s == '7')
-        return 7;
-    if(s == '8')
-        return 8;
-    if(s == '9')
-        return 9;
+    if(s == '-')
+        return 10;
+    return atoi(&s);
 }
 
 int ConvertStringToInt(string s)
 {
-    int n = 0;
-    for(int i = 0;i < s.size();i++)
-    {
-        n *= 10;
-        n += ConvertCharToInt(s[i]);
-    }
+    int n = atoi(s.c_str());
     return n;
-}
-
-char ConvertIntToChar(int s)
-{
-    if(s == 0)
-        return '0';
-    if(s == 1)
-        return '1';
-    if(s == 2)
-        return '2';
-    if(s == 3)
-        return '3';
-    if(s == 4)
-        return '4';
-    if(s == 5)
-        return '5';
-    if(s == 6)
-        return '6';
-    if(s == 7)
-        return '7';
-    if(s == 8)
-        return '8';
-    if(s == 9)
-        return '9';
 }
 
 string ConvertIntToString(int s)
 {
-    string n;
-    while(s > 0)
-    {
-        int a = s % 10;
-        n += ConvertIntToChar(a);
-        s /= 10;
-    }
-    return n;
+    stringstream st;
+    st << s;
+    string str;
+    st >> str;
+    return str;
 }
+
+long int fact(int n)
+{
+    if(n < 0)
+        return 0;
+    if (n == 0)
+        return 1;
+    else
+        return n * fact(n - 1);
+}
+
+string Delete(string d, int index)
+{
+    string res;
+    for(int i = 0;i < index;i++)
+        res += d[i];
+    for(int i = index +1 ;i < d.size();i++)
+        res += d[i];
+    return res;
+}
+
 int Calculate(vector<string> calc)
 {
     vector<string> dys;
@@ -103,7 +77,17 @@ int Calculate(vector<string> calc)
             dys.clear();
         }
         else
-            n = ConvertStringToInt(calc[i]);
+        {
+            string s = calc[i];
+            if(s[0] == '!')
+                n = fact(ConvertStringToInt(Delete(s, 0)));
+            else if(s[0] == 's')
+                n = sqrt(ConvertStringToInt(Delete(s, 0)));
+            else if(s[0] == 'm')
+                n = fabs(ConvertStringToInt(Delete(s, 0)));
+            else
+                n = ConvertStringToInt(s);
+        }
         if(Zn == "*")
             a[j - 1] *= n;
         else if(Zn == ":")
