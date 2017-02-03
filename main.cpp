@@ -41,8 +41,44 @@ int ConvertStringToInt(string s)
     return n;
 }
 
+char ConvertIntToChar(int s)
+{
+    if(s == 0)
+        return '0';
+    if(s == 1)
+        return '1';
+    if(s == 2)
+        return '2';
+    if(s == 3)
+        return '3';
+    if(s == 4)
+        return '4';
+    if(s == 5)
+        return '5';
+    if(s == 6)
+        return '6';
+    if(s == 7)
+        return '7';
+    if(s == 8)
+        return '8';
+    if(s == 9)
+        return '9';
+}
+
+string ConvertIntToString(int s)
+{
+    string n;
+    while(s > 0)
+    {
+        int a = s % 10;
+        n += ConvertIntToChar(a);
+        s /= 10;
+    }
+    return n;
+}
 int Calculate(vector<string> calc)
 {
+    vector<string> dys;
     int result;
     int Znak;
     vector<int> a;
@@ -54,7 +90,20 @@ int Calculate(vector<string> calc)
         string Zn = calc[i];
         j++;
         i++;
-        int n = ConvertStringToInt(calc[i]);
+        int n;
+        if(calc[i] == "(")
+        {
+            i++;
+            while(calc[i] != ")")
+            {
+                dys.push_back(calc[i]);
+                i++;
+            }
+            n = Calculate(dys);
+            dys.clear();
+        }
+        else
+            n = ConvertStringToInt(calc[i]);
         if(Zn == "*")
             a[j - 1] *= n;
         else if(Zn == ":")
@@ -97,69 +146,55 @@ int Calculate(vector<string> calc)
     return result;
 }
 
-int main()
+vector<string> Convert(string h)
 {
     vector<string> str;
-    string h;
-    while(cin >> h, h != ";")
-        str.push_back(h);
-    cout << Calculate(str) << endl;
-    /*int result;
-    vector<string> all;
-    vector<int> a;
-    cout << "Enter string" << endl;
-    string h;
-    int Znak;
-    bool k = false;
-    int j = 0;
-    while(cin >> h, h != ";")
-        all.push_back(h);
-    a.push_back(ConvertStringToInt(all[0]));
-    for(int i = 1;i < all.size();i++)
+    for(int i = 0; i < h.size();i++)
     {
-        string Zn = all[i];
-        j++;
-        i++;
-        int n = ConvertStringToInt(all[i]);
-        if(Zn == "*")
-            a[j - 1] *= n;
-        else if(Zn == ":")
-            a[j - 1] /= n;
+        if(h[i] == '+')
+            str.push_back("+");
+        else if(h[i] == '-')
+            str.push_back("-");
+        else if(h[i] == '*')
+            str.push_back("*");
+        else if(h[i] == ':')
+            str.push_back(":");
+        else if(h[i] == ';')
+            break;
         else
         {
-            if(Zn == "+")
+            int n = 0;
+            while(h[i] != '+' && h[i] != '-' && h[i] != '*' && h[i] != ':' && h[i] != ';')
             {
-                k = true;
-                a.push_back(-1);
-                j++;
+                n *= 10;
+                n += ConvertCharToInt(h[i]);
+                i++;
             }
-            if(Zn == "-")
-            {
-                k = true;
-                a.push_back(-2);
-                j++;
-            }
-            a.push_back(n);
+            if(n != 0)
+                i--;
+            str.push_back(ConvertIntToString(n));
         }
     }
-    result = a[0];
-    if(k)
+    return str;
+}
+
+int main()
+{
+    int var;
+    cin >> var;
+    vector<string> str;
+    if(var == 0)
     {
-        for(int i = 1;i < a.size();i++)
-        {
-            Znak = a[i];
-            i++;
-            switch (Znak)
-            {
-            case -1:
-                result += a[i];
-                break;
-            case -2:
-                result -= a[i];
-                break;
-            }
-        }
+        string h;
+        while(cin >> h, h != ";")
+            str.push_back(h);
     }
-    cout << result << endl;*/
+    else
+    {
+        string h;
+        cin >> h;
+        str = Convert(h);
+    }
+    cout << Calculate(str) << endl;
     return 0;
 }
